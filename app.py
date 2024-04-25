@@ -22,4 +22,13 @@ def show_survey_start():
         instructions=instructions)
 
 
-# add a route for /questions/0
+# fires at page load
+@app.get("/questions/<question_index>")
+def show_question(question_index):
+
+    question = survey.questions[int(question_index)]
+
+    return render_template(
+        "question.jinja",
+        question=question
+    )
