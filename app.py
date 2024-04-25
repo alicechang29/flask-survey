@@ -9,6 +9,7 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 debug = DebugToolbarExtension(app)
 
 RESPONSES = []
+CURRENT_QUESTION_INDEX = 0
 
 
 @app.get("/")
@@ -22,7 +23,16 @@ def show_survey_start():
         instructions=instructions)
 
 
-# fires at page load
+# option: when start survey, pass in question index at 0
+@app.post("/begin")
+def begin_survey():
+
+    global CURRENT_QUESTION_INDEX
+    CURRENT_QUESTION_INDEX = 0
+
+    return redirect(f"/questions/{CURRENT_QUESTION_INDEX}")
+
+
 @app.get("/questions/<question_index>")
 def show_question(question_index):
 
@@ -32,3 +42,16 @@ def show_question(question_index):
         "question.jinja",
         question=question
     )
+
+
+@app.post("/answer")
+def handle_answer():
+
+    answer = request.form["answer"]  # I am not sure?? see form data
+    RESPONSES.append(answer)
+
+    global CURRENT_QUESTION_INDEX
+
+    # if...else index < array.length
+    CURRENT_QUESTION_INDEX = CURRENT_QUESTION_INDEX + 1
+    return redirect(f"/questions/{CURRENT_QUESTION_INDEX}")
