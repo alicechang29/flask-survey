@@ -29,3 +29,12 @@ satisfaction_survey.questions[0]
 dir(satisfaction_survey)
 #results in only the arguments?
 ```
+
+
+Storing the Responses
+- can't have it as a global variable bc doesn't scale
+
+Need to use cookies to "keep state"
+
+
+

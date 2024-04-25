@@ -3,5 +3,13 @@
 {% block content %}
 
   <h1>Thanks for completing this survey!</h1>
+  <ul>
+  {% for item in question_response_pair %}
+    <li><b>{{ item }}</b> {{ question_response_pair[item] }} </li>
+
+  {% endfor %}
+  </ul>
+
+
 
 {% endblock %}
