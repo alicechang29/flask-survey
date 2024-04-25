@@ -38,3 +38,10 @@ Need to use cookies to "keep state"
 
 
 
+everytime taking a survey, we are creating an instance of a survey
+when pressing begin, doing a blank slate of survey
+
+upon survey start,
+-   TODO: reset the array
+
+find a way to determine what question we are on without using a global question variable
