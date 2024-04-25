@@ -7,3 +7,19 @@ app.config['SECRET_KEY'] = "never-tell!"
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 debug = DebugToolbarExtension(app)
+
+RESPONSES = []
+
+
+@app.get("/")
+def show_survey_start():
+    title = survey.title
+    instructions = survey.instructions
+
+    return render_template(
+        "survey_start.jinja",
+        title=title,
+        instructions=instructions)
+
+
+# add a route for /questions/0
