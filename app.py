@@ -9,7 +9,6 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 debug = DebugToolbarExtension(app)
 
 RESPONSES = []
-CURRENT_QUESTION_INDEX = 0
 
 
 @app.get("/")
@@ -27,17 +26,16 @@ def show_survey_start():
         instructions=instructions)
 
 
-# option: when start survey, pass in question index at 0
 @app.post("/begin")
 def begin_survey():
     """
-    Upon survey start, resets current question index and redicts to current
+    Upon survey start, resets RESPONSES list and redicts to current
     question page
     """
-    global CURRENT_QUESTION_INDEX
-    CURRENT_QUESTION_INDEX = 0
+    global RESPONSES
+    RESPONSES = []
 
-    return redirect(f"/questions/{CURRENT_QUESTION_INDEX}")
+    return redirect(f"/questions/0")
 
 
 @app.get("/questions/<question_index>")
@@ -49,25 +47,24 @@ def show_question(question_index):
 
     return render_template(
         "question.jinja",
-        question=question
+        question=question,
     )
 
 
 @app.post("/answer")
 def handle_answer():
     """
-    Takes user's survey answer and appends to RESPONSES list
+    Takes user's survey answer and appends to RESPONSES list, redirects to
+    the next available question or the thank you page
     """
 
     answer = request.form["answer"]
     RESPONSES.append(answer)
 
-    global CURRENT_QUESTION_INDEX
+    next_question_index = len(RESPONSES)
 
     if len(RESPONSES) < len(survey.questions):
-        CURRENT_QUESTION_INDEX = CURRENT_QUESTION_INDEX + 1
-        return redirect(f"/questions/{CURRENT_QUESTION_INDEX}")
-
+        return redirect(f"/questions/{next_question_index}")
     else:
         return redirect("/completion")
 
@@ -80,9 +77,6 @@ def show_completion():
     question_response_pair = {}
     for index, question in enumerate(survey.questions):
         question_response_pair[question.prompt] = RESPONSES[index]
-    # {question1: answer1
-    #  q2:a2  }
-    print("!!!!!!!QA PAIR", question_response_pair)
 
     return render_template(
         "completion.jinja",
