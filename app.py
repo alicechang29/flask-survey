@@ -8,7 +8,7 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 debug = DebugToolbarExtension(app)
 
-RESPONSES = []
+RESPONSES = []  # it's still global but can be lower case, because not constant
 
 
 @app.get("/")
@@ -17,7 +17,7 @@ def show_survey_start():
     Upon page load, returns a string of HTML that displays survey title and
     instructions
     """
-    title = survey.title
+    title = survey.title                # just pass these over to the template to handle
     instructions = survey.instructions
 
     return render_template(
@@ -29,21 +29,22 @@ def show_survey_start():
 @app.post("/begin")
 def begin_survey():
     """
-    Upon survey start, resets RESPONSES list and redicts to current
+    Upon survey start, resets RESPONSES list and redirects to current
     question page
     """
-    global RESPONSES
+    global RESPONSES    # need global then it'd create a new response
     RESPONSES = []
 
-    return redirect(f"/questions/0")
+    return redirect("/questions/0")
 
 
-@app.get("/questions/<question_index>")
+# /<query parameter> can change types
+@app.get("/questions/<int:question_index>")
 def show_question(question_index):
     """
     Displays the current survey question
     """
-    question = survey.questions[int(question_index)]
+    question = survey.questions[question_index]
 
     return render_template(
         "question.jinja",
@@ -70,11 +71,12 @@ def handle_answer():
 
 
 @app.get("/completion")
-def show_completion():
+def show_completion():  # FIXME: survery_complete, because completion is akin to a state
     """
     Shows completion page with user's questions and answers
     """
-    question_response_pair = {}
+    question_response_pair = {}  # FIXME: rename key_to_value
+    # FIXME: check out jinja syntax for loop
     for index, question in enumerate(survey.questions):
         question_response_pair[question.prompt] = RESPONSES[index]
 
